@@ -104,6 +104,11 @@ catch(PDOException $pe)
            
         }
         echo "</table>";
+
+        if(isset($_SESSION['connexion']))
+        {
+          echo "<button class='boutton_com' type='submit'>Laisser un commentaire</button>";
+        }
 ?>
 
 <footer class="footer_or" class="page-footer font-small blue">
