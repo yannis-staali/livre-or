@@ -17,7 +17,8 @@ $options =
 ];
 
   $PDO = new PDO($DB_DSN, $DB_USER, $DB_PASS, $options);
-  $request = $PDO->prepare("SELECT commentaires.date, utilisateurs.login, commentaires.commentaire FROM commentaires INNER JOIN utilisateurs ON commentaires.id_utilisateur = utilisateurs.id ORDER BY date DESC ");         
+  $request = $PDO->prepare("SELECT commentaires.date, utilisateurs.login, commentaires.commentaire FROM commentaires INNER JOIN utilisateurs ON commentaires.id_utilisateur = utilisateurs.id ORDER BY date DESC ");  
+  $request -> setFetchMode(PDO::FETCH_ASSOC);       
   $request->execute();                      
 }
 catch(PDOException $pe)
@@ -36,7 +37,7 @@ include('header.php');
         echo "<table class='comm'>";
         while($resultat = $request->fetch())
         {
-          echo "<tr><td> Posté le :  $resultat[date] </td>  <td> par : $resultat[login] </td> . <td> $resultat[commentaire] </td></tr>" ;
+          echo "<tr><td> Posté le :  $resultat[date] </td>  <td> par : $resultat[login] </td> <td> $resultat[commentaire] </td></tr>" ;
            
         }
         echo "</table>";
