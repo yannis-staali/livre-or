@@ -1,62 +1,83 @@
-<!doctype html>
-<html lang="fr">
-  <head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.5.3/dist/css/bootstrap.min.css" integrity="sha384-TX8t27EcRE3e/ihU7zmQxVncDAy5uIKz4rEkgIXeMed4M0jlfIDPvg6uqKI2xXr2" crossorigin="anonymous">
+<?php
+session_start();
 
-    <link rel="stylesheet" href="livreor.css">
+$DB_DSN = 'mysql:host=localhost;dbname=livreor';
+$DB_USER = 'root';
+$DB_PASS = '';
 
-    <title>Connexion</title>
-  </head>
+try
+{
+$options =
+[
+  PDO::MYSQL_ATTR_INIT_COMMAND => 'SET NAMES utf8',
+  PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
+  PDO::ATTR_EMULATE_PREPARES => false
+];
+if(!isset($_SESSION['connexion']))
+{
+    header('location: connexion.php');
+    exit();
+}
+//ici on stocke le contenu de la variable SESSION (le login entré precedemment) dans $loginverify
+//pour pouvoir l'utiliser pour fixer la ligne lors de la requete UPDATE
+$idverify = $_SESSION['connexion'];
 
-  <body>
-  
-  <header class="navbar navbar-expand-lg navbar-dark bg-dark">
-  <a class="navbar-brand" href="livre-or.php">Livre d'or</a>
-  <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarColor02" aria-controls="navbarColor02" aria-expanded="false" aria-label="Toggle navigation">
-    <span class="navbar-toggler-icon"></span>
-  </button>
+      if(isset($_POST['submit']))
+      {
+            if(!empty($_POST))
+            {
+            $login = $_POST['login'];
+            $password = $_POST['password'];
+            $password2 = $_POST['password2'];
+            $test= 'salut';
 
-  <div class="collapse navbar-collapse" id="navbarColor02">
-    <ul class="navbar-nav mr-auto">
-      <li class="nav-item active">
-        <a class="nav-link" href="index.php">Accueil
-          <span class="sr-only">(current)</span>
-        </a>
-      </li>
-      <li class="nav-item">
-        <a class="nav-link" href="inscription.php">Inscription</a>
-      </li>
-      <li class="nav-item">
-        <a class="nav-link" href="connexion.php">Connexion</a>
-      </li>
-      <li class="nav-item">
-        <a class="nav-link" href="profil.php">Profil</a>
-      </li>
-      <li class="nav-item dropdown">
-        <a class="nav-link dropdown-toggle" data-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="false">Action</a>
-        <div class="dropdown-menu">
-          <a class="dropdown-item" href="deconnexion.php">Deconnexion</a>
-        </div>
-      </li>
-    </ul>
-    <form class="form-inline my-2 my-lg-0">
-      <input class="form-control mr-sm-2" type="text" placeholder="Que cherchez-vous?">
-      <button class="btn btn-secondary my-2 my-sm-0" type="submit">C'est parti !</button>
-    </form>
-  </div>
-</header>
+                  if($password==$password2)
+                  {
+                    
+                  $PDO = new PDO($DB_DSN, $DB_USER, $DB_PASS, $options);
+                  $request = $PDO->prepare("SELECT*FROM utilisateurs WHERE login = ? ");         
+                  $request->bindValue(1, $login);
+                  $request->execute();
+
+                  $row = $request->rowCount();
+                            
+
+                         if($row==0)
+                         {
+                         $request2 = $PDO->prepare("UPDATE utilisateurs SET login = ?, password = ?  WHERE id = ? ");
+                        
+
+                         $request2->bindValue(1, $login);
+                         $request2->bindValue(2, $password);
+                         $request2->bindValue(3, $idverify);
+                         $request2->execute();
+                         var_dump($request2);
+                         }
+                  }
+            }
+      }
+}
+catch(PDOException $pe)
+{
+   echo 'ERREUR : '.$pe->getMessage();
+}
+?>
+
+<?php
+
+include('header.php');
+
+?>
 
 
-<form  class="text-center border border-light p-5"  action="#!">
+<form  class="text-center border border-light p-5"  action="profil.php" method="post">
     <p class="h4 mb-4">Modifiez votre pseudo et mot de passe</p>
 
-    <input type="text" id="defaultLoginFormText" class="form-control mb-4" placeholder="Pseudo">
-    <input type="password" id="defaultLoginFormPassword" class="form-control mb-4" placeholder="Mot de passe">
-    <input type="password" id="defaultLoginFormPassword" class="form-control mb-4" placeholder="Confirmez">
+    <input type="text" id="defaultLoginFormText" class="form-control mb-4" placeholder="Pseudo" name="login">
+    <input type="password" id="defaultLoginFormPassword" class="form-control mb-4" placeholder="Mot de passe" name="password">
+    <input type="password" id="defaultLoginFormPassword" class="form-control mb-4" placeholder="Confirmez" name="password2">
    
-    <button class="btn btn-info btn-block my-4" type="submit">C'est parti !</button>
+    <button class="btn btn-info btn-block my-4" type="submit" name="submit">C'est parti !</button>
 </form>
 
 

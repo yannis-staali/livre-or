@@ -15,21 +15,10 @@ $options =
   PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
   PDO::ATTR_EMULATE_PREPARES => false
 ];
-    
-                
+                    
     $PDO = new PDO($DB_DSN, $DB_USER, $DB_PASS, $options);
-    $request = $PDO->prepare("SELECT commentaires.date, utilisateurs.login, commentaires.commentaire FROM commentaires INNER JOIN utilisateurs ON commentaires.id_utilisateur = utilisateurs.id ");         
-    $request->execute();                  
-  
-    // $ligne = $request->fetch(PDO::FETCH_ASSOC);
-
-    // while($resultat = $request->fetch())
-    // {
-    //   $date = $resultat['date'];
-    //   $login = $resultat['login'];
-    //   $commentaire = $resultat['commentaire'];
-    // }
-      
+    $request = $PDO->prepare("SELECT commentaires.date, utilisateurs.login, commentaires.commentaire FROM commentaires INNER JOIN utilisateurs ON commentaires.id_utilisateur = utilisateurs.id ORDER BY date DESC ");         
+    $request->execute();                      
 }
 catch(PDOException $pe)
 {
@@ -37,65 +26,12 @@ catch(PDOException $pe)
 }
 ?>
 
-<!doctype html>
-<html lang="fr">
-  <head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.5.3/dist/css/bootstrap.min.css" integrity="sha384-TX8t27EcRE3e/ihU7zmQxVncDAy5uIKz4rEkgIXeMed4M0jlfIDPvg6uqKI2xXr2" crossorigin="anonymous">
+<?php
 
-    <link rel="stylesheet" href="livreor.css">
+include('header.php');
 
-    <title>Connexion</title>
-  </head>
+?>
 
-  <body>
-  
-  <header class="navbar navbar-expand-lg navbar-dark bg-dark">
-  <a class="navbar-brand" href="livre-or.php">Livre d'or</a>
-  <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarColor02" aria-controls="navbarColor02" aria-expanded="false" aria-label="Toggle navigation">
-    <span class="navbar-toggler-icon"></span>
-  </button>
-
-  <div class="collapse navbar-collapse" id="navbarColor02">
-    <ul class="navbar-nav mr-auto">
-      <li class="nav-item active">
-        <a class="nav-link" href="index.php">Accueil
-          <span class="sr-only">(current)</span>
-        </a>
-      </li>
-      <li class="nav-item">
-        <a class="nav-link" href="inscription.php">Inscription</a>
-      </li>
-      <li class="nav-item">
-        <a class="nav-link" href="connexion.php">Connexion</a>
-      </li>
-      <li class="nav-item">
-        <a class="nav-link" href="profil.php">Profil</a>
-      </li>
-      <li class="nav-item dropdown">
-        <a class="nav-link dropdown-toggle" data-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="false">Action</a>
-        <div class="dropdown-menu">
-          <a class="dropdown-item" href="deconnexion.php">Deconnexion</a>
-        </div>
-      </li>
-    </ul>
-    <form class="form-inline my-2 my-lg-0">
-      <input class="form-control mr-sm-2" type="text" placeholder="Que cherchez-vous?">
-      <button class="btn btn-secondary my-2 my-sm-0" type="submit">C'est parti !</button>
-    </form>
-  </div>
-</header>
-
-<!-- <main class="jumbotron">
-  <h1 class="display-3">Liste des commentaires</h1>
-  <p class="lead">This is a simple hero unit, a simple jumbotron-style component for calling extra attention to featured content or information.</p>
-  <hr class="my-4">
-  <p>It uses utility classes for typography and spacing to space content out within the larger container.</p>
-  <p class="lead">
-    <a class="btn btn-primary btn-lg" href="#" role="button">Learn more</a>
-  </p>
-</main> -->
 <?php  
         echo "<table class='comm'>";
         while($resultat = $request->fetch())
@@ -107,7 +43,7 @@ catch(PDOException $pe)
 
         if(isset($_SESSION['connexion']))
         {
-          echo "<button class='boutton_com' type='submit'>Laisser un commentaire</button>";
+          echo "<a class='btn btn-primary' href='commentaire.php' role='button'>Laisser un commentaire</a>";
         }
 ?>
 
